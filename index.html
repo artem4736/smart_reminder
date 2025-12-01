@@ -6,108 +6,205 @@
   <title>Smart Reminder</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+
+<!-- Модальне вікно -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="editTitle">Редагувати нагадування</h2>
+
+    <label>Назва</label>
+    <input type="text" id="edit-name">
+
+    <label>Опис</label>
+    <textarea id="edit-desc"></textarea>
+
+    <label>Дата дедлайну</label>
+    <input type="date" id="edit-date">
+
+    <label>Час</label>
+    <input type="time" id="edit-time">
+
+    <div class="modal-actions">
+      <button id="saveEdit" class="btn-blue">Зберегти</button>
+      <button id="closeModal" class="btn-red">Закрити</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // простий захист сторінки
   if (!localStorage.getItem("sm_user")) {
       window.location.href = "login.html";
   }
 </script>
 
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand">Smart Reminder</div>
-      <nav>
-        <button id="btnHome" class="nav-btn active">Головна</button>
-        <button id="btnCalendar" class="nav-btn">Календар</button>
-        <button id="btnSettings" class="nav-btn">Налаштування</button>
-        <button id="btnLogoutSidebar" class="nav-btn">Вийти</button>
-      </nav>
-    </aside>
+<div class="app">
 
-    <!-- Main area -->
-    <div class="main">
-      <!-- Top bar -->
-      <header class="topbar">
-        <div class="left"></div>
-        <div class="right">
-          <button id="addGlobalBtn" class="primary">+ Додати нагадування</button>
-          <button id="profileBtn" class="avatar">👤</button>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Smart Reminder</div>
+    <nav>
+      <button id="btnHome" class="nav-btn active">Головна</button>
+      <button id="btnCalendar" class="nav-btn">Календар</button>
+      <button id="btnSettings" class="nav-btn">Налаштування</button>
+      <button id="btnLogoutSidebar" class="nav-btn">Вийти</button>
+    </nav>
+  </aside>
+
+  <!-- Main area -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="left"></div>
+      <div class="right">
+        <!-- КНОПКУ ЗВІДСИ ВИДАЛЕНО -->
+        <button id="profileBtn" class="avatar">👤</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- HOME -->
+      <section id="screen-home" class="screen active">
+        <h2 class="home-title">Мої нагадування</h2>
+        <p class="home-subtitle">Керуйте своїми завданнями та дедлайнами</p>
+
+        <div class="filters-row">
+          <button data-filter="today" class="filter-btn">Сьогодні</button>
+          <button data-filter="week" class="filter-btn">Тиждень</button>
+          <button data-filter="all" class="filter-btn active">Усі</button>
         </div>
-      </header>
 
-      <!-- Content -->
-      <main class="content">
+        <div class="search-row">
+          <input id="searchInput" class="search-input" type="text" placeholder="Пошук нагадувань...">
+        </div>
 
-        <!-- Home screen -->
-        <section id="screen-home" class="screen">
-          <h2 class="home-title">Мої нагадування</h2>
-          <p class="home-subtitle">Керуйте своїми завданнями та дедлайнами</p>
+        <!-- НОВА КНОПКА НА СТОРІНЦІ -->
+        <button id="addGlobalBtn" class="primary" style="margin: 20px 0;">
+          + Додати нагадування
+        </button>
 
-          <div class="filters-row">
-              <button data-filter="today" class="filter-btn">Сьогодні</button>
-              <button data-filter="week" class="filter-btn">Тиждень</button>
-              <button data-filter="all" class="filter-btn active">Усі</button>
+        <div id="remindersContainer" class="reminder-cards"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="screen-calendar" class="screen hidden">
+
+        <h2 class="page-title">Календар</h2>
+
+        <div class="calendar-header">
+          <button id="prevMonth">←</button>
+          <h3 id="calendarMonth"></h3>
+          <button id="nextMonth">→</button>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <h3 class="events-title">Події на день</h3>
+        <div id="dayEvents" class="day-events"></div>
+
+        <button id="addFromCalendar" class="primary" style="margin-top:20px;">
+          + Додати нагадування
+        </button>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="screen-settings" class="screen hidden">
+        <h2>Налаштування</h2>
+        <p>Тут будуть опції теми, мови та сповіщень.</p>
+      </section>
+
+      <!-- CREATE SCREEN -->
+      <section id="screen-create-page" class="screen hidden create-page">
+
+        <h2 class="page-title">Нове нагадування</h2>
+        <p class="page-subtitle">Заповніть деталі вашого завдання</p>
+
+        <form id="createFormPage" class="create-card">
+
+          <label>Назва</label>
+          <input id="titleInput" type="text" required>
+
+          <label>Опис</label>
+          <textarea id="descriptionInput"></textarea>
+
+          <div class="row-2">
+            <div>
+              <label>Дата</label>
+              <input id="dateInput" type="date" required>
+            </div>
+            <div>
+              <label>Час</label>
+              <input id="timeInput" type="time">
+            </div>
           </div>
 
-          <div class="search-row">
-              <input type="text" id="searchInput" class="search-input" placeholder="Пошук нагадувань..." />
+          <label class="toggle-row">
+            Надсилати нагадування
+            <input id="isActiveInput" type="checkbox" checked>
+          </label>
+
+          <div class="buttons-row">
+            <button type="button" id="cancelCreateBtn" class="secondary big">Скасувати</button>
+            <button type="submit" class="primary big">Зберегти</button>
           </div>
 
-          <div id="remindersContainer" class="reminder-cards"></div>
-        </section>
+        </form>
+      </section>
+<!-- PROFILE SCREEN -->
+<section id="screen-profile" class="screen hidden">
+  <h2 class="page-title">Профіль</h2>
 
-        <!-- Calendar / Settings placeholders -->
-        <section id="screen-calendar" class="screen hidden">
-          <h2>Календар (в розробці)</h2>
-          <p>Перегляд подій по днях/тижнях/місяцях — планується.</p>
-        </section>
+  <!-- ФОТО ПРОФІЛЮ -->
+  <div class="profile-card">
+      <h3 class="section-title">Фото профілю</h3>
 
-        <section id="screen-settings" class="screen hidden">
-          <h2>Налаштування</h2>
-          <p>Тут будуть опції теми, мови та сповіщень.</p>
-        </section>
+      <div class="profile-photo-row">
+          <img id="profilePhoto" src="avatar.png" class="profile-photo-img">
 
-        <!-- Create screen — лише ОДНА секція (унікальний id) -->
-        <section id="screen-create-page" class="screen hidden create-page">
-          <h2 class="page-title">Нове нагадування</h2>
-          <p class="page-subtitle">Заповніть деталі вашого завдання</p>
-
-          <form id="createFormPage" class="create-card">
-              <label>Назва події</label>
-              <input id="titleInput" name="title" type="text" placeholder="Наприклад, Математика" required />
-
-              <label>Опис</label>
-              <textarea id="descriptionInput" name="description" placeholder="Опишіть завдання детально..." rows="4"></textarea>
-
-              <div class="row-2">
-                  <div>
-                      <label>Дата</label>
-                      <input id="dateInput" name="date" type="date" required />
-                  </div>
-
-                  <div>
-                      <label>Час</label>
-                      <input id="timeInput" name="time" type="time" />
-                  </div>
-              </div>
-
-              <label class="toggle-row">
-                  Надсилати нагадування
-                  <input id="isActiveInput" name="isActive" type="checkbox" checked />
-              </label>
-
-              <div class="buttons-row">
-                  <button type="button" id="cancelCreateBtn" class="secondary big">Скасувати</button>
-                  <button type="submit" class="primary big">Зберегти</button>
-              </div>
-          </form>
-        </section>
-
-      </main>
-    </div>
+          <div class="profile-photo-buttons">
+              <button class="btn-light" id="uploadPhotoBtn">⬆ Завантажити фото</button>
+              <button class="btn-red-outline" id="deletePhotoBtn">Видалити</button>
+          </div>
+      </div>
   </div>
+
+  <!-- ОСОБИСТА ІНФОРМАЦІЯ -->
+  <div class="profile-card">
+      <h3 class="section-title">Особиста інформація</h3>
+
+      <label>Ім’я</label>
+      <input type="text" id="profileNameInput">
+
+      <label>Email</label>
+      <input type="email" id="profileEmailInput">
+
+      <button class="btn-blue" id="saveProfileBtn">Зберегти зміни</button>
+  </div>
+
+  <!-- БЕЗПЕКА -->
+  <div class="profile-card">
+      <h3 class="section-title">Безпека</h3>
+      <button id="changePasswordBtn" class="btn-light">Змінити пароль</button>
+  </div>
+
+  <!-- НЕБЕЗПЕЧНА ЗОНА -->
+  <div class="danger-card">
+      <h3 class="danger-title">Небезпечна зона</h3>
+      <p class="danger-text">
+        Після видалення акаунта всі ваші дані буде безповоротно втрачено.
+        Будь ласка, будьте обережні.
+      </p>
+
+      <button id="deleteAccountBtn" class="btn-red">❗ Видалити акаунт</button>
+  </div>
+
+</section>
+
+    </main>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>

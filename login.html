@@ -21,31 +21,82 @@
 
       <div class="password-row">
           <label for="password">Пароль</label>
-          <a href="#" class="forgot">Забули пароль?</a>
+          <a href="#" id="openForgot" class="forgot">Забули пароль?</a>
       </div>
 
       <input type="password" id="password" placeholder="●●●●●●●" required>
 
-      <button type="submit" class="primary-btn">Увійти</button>
+      <button type="submit" id="loginBtn" class="primary-btn">Увійти</button>
 
       <p class="register-text">
         Немає акаунта?
-        <a href="#" class="register-link">Зареєструватися</a>
+        <a href="#" id="openRegister" class="register-link">Зареєструватися</a>
       </p>
 
     </form>
 
   </div>
 </main>
-<script>
-document.getElementById("loginBtn").addEventListener("click", function () {
-    // Імітація авторизації — записуємо користувача
-    localStorage.setItem("sm_user", "logged");
 
-    // Перехід на головну
-    window.location.href = "index.html";
+
+<!-- ---------------- МОДАЛКА: ЗАБУЛИ ПАРОЛЬ ---------------- -->
+<div id="forgotModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="forgotModal">&times;</span>
+    <h2>Відновлення паролю</h2>
+    <p>Введіть email для отримання посилання на відновлення.</p>
+    <input type="email" class="modal-input" placeholder="Email">
+    <button class="modal-btn">Надіслати</button>
+  </div>
+</div>
+
+<!-- ---------------- МОДАЛКА: РЕЄСТРАЦІЯ ---------------- -->
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="registerModal">&times;</span>
+    <h2>Створення акаунта</h2>
+    <input type="text" class="modal-input" placeholder="Ім’я">
+    <input type="email" class="modal-input" placeholder="Email">
+    <input type="password" class="modal-input" placeholder="Пароль">
+    <button class="modal-btn">Зареєструватися</button>
+  </div>
+</div>
+
+
+<script>
+// Відкриття модалки
+function openModal(id) {
+  document.getElementById(id).style.display = "flex";
+}
+
+// Закриття модалки
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+// Кнопки відкриття
+document.getElementById("openForgot").onclick = () => openModal("forgotModal");
+document.getElementById("openRegister").onclick = () => openModal("registerModal");
+
+// Кнопки закриття
+document.querySelectorAll(".close").forEach(btn => {
+  btn.onclick = () => closeModal(btn.dataset.close);
 });
+
+// Закриття по кліку поза вікном
+window.onclick = e => {
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
+  }
+};
+
+// Авторизація
+document.getElementById("loginBtn").onclick = e => {
+  e.preventDefault();
+  localStorage.setItem("sm_user", "logged");
+  window.location.href = "index.html";
+};
 </script>
-<script src="script-login.js"></script>
+
 </body>
 </html>

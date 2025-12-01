@@ -1,70 +1,308 @@
-// ------------------ AUTH ------------------
-if (!localStorage.getItem("sm_user")) {
-  window.location.href = "login.html";
-}
+// script.js — робочий варіант з пошуком + календар + Профіль
+window.addEventListener("DOMContentLoaded", () => {
 
-// ------------------ ELEMENTS ------------------
-const btnAdd = document.getElementById("addGlobalBtn");
-const btnLogoutSidebar = document.getElementById("btnLogoutSidebar");
+  // ------------------ AUTH ------------------
+  if (!localStorage.getItem("sm_user")) {
+    window.location.href = "login.html";
+    return;
+  }
 
-const btnHome = document.getElementById("btnHome");
-const btnCalendar = document.getElementById("btnCalendar");
-const btnSettings = document.getElementById("btnSettings");
+  // ------------------ ELEMENTS ------------------
+  const btnAdd = document.getElementById("addGlobalBtn");
+  const btnAddFromCalendar = document.getElementById("addFromCalendar");
+  const btnLogoutSidebar = document.getElementById("btnLogoutSidebar");
 
-const screenHome = document.getElementById("screen-home");
-const screenCreate = document.getElementById("screen-create-page");
-const screenCalendar = document.getElementById("screen-calendar");
-const screenSettings = document.getElementById("screen-settings");
+  const btnHome = document.getElementById("btnHome");
+  const btnCalendar = document.getElementById("btnCalendar");
+  const btnSettings = document.getElementById("btnSettings");
 
-const createForm = document.getElementById("createFormPage");
-const cancelCreateBtn = document.getElementById("cancelCreateBtn");
-const remindersContainer = document.getElementById("remindersContainer");
+  const screenHome = document.getElementById("screen-home");
+  const screenCreate = document.getElementById("screen-create-page");
+  const screenCalendar = document.getElementById("screen-calendar");
+  const screenSettings = document.getElementById("screen-settings");
+  const screenProfile = document.getElementById("screen-profile");
 
-const filterButtons = document.querySelectorAll(".filter-btn");
-let currentFilter = "all"; // default
+  const profileBtn = document.getElementById("profileBtn");
 
+  const createForm = document.getElementById("createFormPage");
+  const cancelCreateBtn = document.getElementById("cancelCreateBtn");
+  const remindersContainer = document.getElementById("remindersContainer");
 
-// ------------------ SCREEN SWITCHING ------------------
-function hideAllScreens() {
-  document.querySelectorAll(".screen").forEach((s) => s.classList.add("hidden"));
-}
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const searchInput = document.getElementById("searchInput");
 
-function showScreen(screenEl) {
-  hideAllScreens();
-  screenEl.classList.remove("hidden");
-  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
-}
+  const calendarGrid = document.getElementById("calendarGrid");
+  const calendarMonth = document.getElementById("calendarMonth");
+  const btnCalPrev = document.getElementById("prevMonth");
+  const btnCalNext = document.getElementById("nextMonth");
 
-function showHome() {
-  showScreen(screenHome);
-  btnHome.classList.add("active");
-  renderReminders();
-}
+  const changePasswordBtn = document.getElementById("changePasswordBtn");
+  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
-function showCreate() {
-  showScreen(screenCreate);
-}
+  // ------------------ STATE ------------------
+  let currentFilter = "all";
+  let currentSearch = "";
+  let selectedCalendarDate = null;
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
 
+  // ------------------ HELPERS ------------------
+  function hideAllScreens() {
+    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  }
 
-// ------------------ INIT ------------------
-document.addEventListener("DOMContentLoaded", () => {
-  showHome();
-  renderReminders();
+  function showScreen(screenEl) {
+    hideAllScreens();
+    if (screenEl) screenEl.classList.remove("hidden");
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  }
 
-  btnAdd.addEventListener("click", () => {
-    createForm.reset();
-    showCreate();
+  function showHome() {
+    showScreen(screenHome);
+    btnHome.classList.add("active");
+    renderReminders();
+  }
+
+  function showCreate() {
+    showScreen(screenCreate);
+  }
+
+  function escapeHtml(t) {
+    return String(t || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  // ------------------ PROFILE SCREEN ------------------
+  if (profileBtn) {
+    profileBtn.addEventListener("click", () => {
+      hideAllScreens();
+      screenProfile.classList.remove("hidden");
+    });
+  }
+
+  if (changePasswordBtn) {
+    changePasswordBtn.addEventListener("click", () => {
+      alert("Функціонал зміни пароля ще не реалізований.");
+    });
+  }
+
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", () => {
+      if (confirm("Ви впевнені, що хочете видалити акаунт?")) {
+        localStorage.removeItem("sm_user");
+        localStorage.removeItem("sm_reminders");
+        window.location.href = "login.html";
+      }
+    });
+  }
+
+  // ------------------ MODAL EDIT ------------------
+  function openEditModal(id) {
+    const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+    const reminder = reminders.find(r => String(r.id) === String(id));
+    if (!reminder) return;
+
+    const elName = document.getElementById("edit-name");
+    const elDesc = document.getElementById("edit-desc");
+    const elDate = document.getElementById("edit-date");
+    const elTime = document.getElementById("edit-time");
+    const modal = document.getElementById("editModal");
+
+    elName.value = reminder.title || "";
+    elDesc.value = reminder.description || "";
+    elDate.value = reminder.date || "";
+    elTime.value = reminder.time || "";
+
+    document.getElementById("saveEdit").setAttribute("data-id", reminder.id);
+    modal.classList.remove("hidden");
+  }
+
+  document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("editModal").classList.add("hidden");
   });
 
-  cancelCreateBtn.addEventListener("click", () => {
-    showHome();
+  document.getElementById("saveEdit").addEventListener("click", (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+    const idx = reminders.findIndex(r => String(r.id) === id);
+    if (idx === -1) return;
+
+    reminders[idx].title = document.getElementById("edit-name").value;
+    reminders[idx].description = document.getElementById("edit-desc").value;
+    reminders[idx].date = document.getElementById("edit-date").value;
+    reminders[idx].time = document.getElementById("edit-time").value;
+
+    localStorage.setItem("sm_reminders", JSON.stringify(reminders));
+    document.getElementById("editModal").classList.add("hidden");
+    renderReminders();
   });
 
+  // ------------------ CREATE NEW REMINDER ------------------
+  if (createForm) {
+    createForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("titleInput").value.trim();
+      const description = document.getElementById("descriptionInput").value.trim();
+      const date = document.getElementById("dateInput").value;
+      const time = document.getElementById("timeInput").value;
+      const isActive = document.getElementById("isActiveInput").checked;
+
+      if (!title || !date) {
+        alert("Вкажіть назву та дату.");
+        return;
+      }
+
+      const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+
+      reminders.push({
+        id: Date.now(),
+        title,
+        description,
+        date,
+        time,
+        isActive
+      });
+
+      localStorage.setItem("sm_reminders", JSON.stringify(reminders));
+      showHome();
+    });
+  }
+
+  if (cancelCreateBtn) cancelCreateBtn.addEventListener("click", showHome);
+
+  // ------------------ REMINDERS LIST ------------------
+  function renderReminders() {
+    const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+    const today = new Date().toISOString().split("T")[0];
+    const now = new Date();
+
+    let filtered = reminders.filter(r => {
+      if (!r.date) return false;
+
+      if (currentFilter === "today") return r.date === today;
+      if (currentFilter === "week") {
+        const diff = (new Date(r.date) - now) / 86400000;
+        return diff >= 0 && diff <= 7;
+      }
+
+      return true;
+    });
+
+    if (currentSearch) {
+      filtered = filtered.filter(r =>
+        (r.title || "").toLowerCase().includes(currentSearch) ||
+        (r.description || "").toLowerCase().includes(currentSearch)
+      );
+    }
+
+    remindersContainer.innerHTML = "";
+
+    if (!filtered.length) {
+      remindersContainer.innerHTML = `<p class="muted">Немає нагадувань.</p>`;
+      return;
+    }
+
+    filtered.sort((a, b) => a.date.localeCompare(b.date));
+
+    filtered.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "reminder-card";
+      card.innerHTML = `
+        <button class="edit-btn" data-id="${r.id}">✏️</button>
+        <div class="card-title">${escapeHtml(r.title)}</div>
+        <div class="card-sub">${escapeHtml(r.description)}</div>
+        <div class="card-meta">${escapeHtml(r.date)}${r.time ? " • " + escapeHtml(r.time) : ""}</div>
+      `;
+      remindersContainer.appendChild(card);
+    });
+  }
+
+  remindersContainer.addEventListener("click", (e) => {
+    if (e.target.classList.contains("edit-btn")) {
+      openEditModal(e.target.dataset.id);
+    }
+  });
+
+  // ------------------ CALENDAR ------------------
+  function renderCalendar(month, year) {
+    calendarGrid.innerHTML = "";
+    const monthNames = [
+      "Січень","Лютий","Березень","Квітень","Травень","Червень",
+      "Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"
+    ];
+
+    calendarMonth.innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startIndex = (firstDay === 0 ? 6 : firstDay - 1);
+
+    for (let i = 0; i < startIndex; i++) {
+      const empty = document.createElement("div");
+      empty.classList.add("empty");
+      calendarGrid.appendChild(empty);
+    }
+
+    const today = new Date();
+    const isThisMonth = today.getMonth() === month && today.getFullYear() === year;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement("div");
+      cell.classList.add("day");
+      cell.innerText = d;
+
+      if (isThisMonth && d === today.getDate()) {
+        cell.classList.add("today");
+      }
+
+      if (selectedCalendarDate &&
+          selectedCalendarDate.getFullYear() === year &&
+          selectedCalendarDate.getMonth() === month &&
+          selectedCalendarDate.getDate() === d) {
+        cell.classList.add("active-day");
+      }
+
+      cell.addEventListener("click", () => {
+        selectedCalendarDate = new Date(year, month, d);
+
+        calendarGrid.querySelectorAll(".day").forEach(el => el.classList.remove("active-day"));
+        cell.classList.add("active-day");
+      });
+
+      calendarGrid.appendChild(cell);
+    }
+  }
+
+  btnCalPrev.addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  btnCalNext.addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  // ------------------ NAVIGATION ------------------
   btnHome.addEventListener("click", showHome);
 
   btnCalendar.addEventListener("click", () => {
     showScreen(screenCalendar);
     btnCalendar.classList.add("active");
+    renderCalendar(currentMonth, currentYear);
   });
 
   btnSettings.addEventListener("click", () => {
@@ -72,106 +310,48 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSettings.classList.add("active");
   });
 
-  btnLogoutSidebar.addEventListener("click", () => {
-    localStorage.removeItem("sm_user");
-    window.location.href = "login.html";
-  });
+  if (btnLogoutSidebar) {
+    btnLogoutSidebar.addEventListener("click", () => {
+      localStorage.removeItem("sm_user");
+      window.location.href = "login.html";
+    });
+  }
 
-  // --- FILTER BUTTONS ---
-  filterButtons.forEach((btn) => {
+  filterButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      filterButtons.forEach((b) => b.classList.remove("active"));
+      filterButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-
-      currentFilter = btn.dataset.filter; // today / week / all
+      currentFilter = btn.dataset.filter;
       renderReminders();
     });
   });
 
-  // --- CREATE FORM ---
-  createForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      currentSearch = e.target.value.trim().toLowerCase();
+      renderReminders();
+    });
+  }
 
-    const title = document.getElementById("titleInput").value.trim();
-    const description = document.getElementById("descriptionInput").value.trim();
-    const date = document.getElementById("dateInput").value;
-    const time = document.getElementById("timeInput").value;
-    const isActive = document.getElementById("isActiveInput").checked;
+  if (btnAdd) btnAdd.addEventListener("click", () => {
+    createForm.reset();
+    showCreate();
+  });
 
-    if (!title || !date) {
-      alert("Вкажіть назву та дату.");
-      return;
+  if (btnAddFromCalendar) btnAddFromCalendar.addEventListener("click", () => {
+    createForm.reset();
+    showCreate();
+
+    if (selectedCalendarDate) {
+      const yyyy = selectedCalendarDate.getFullYear();
+      const mm = String(selectedCalendarDate.getMonth() + 1).padStart(2, "0");
+      const dd = String(selectedCalendarDate.getDate()).padStart(2, "0");
+      document.getElementById("dateInput").value = `${yyyy}-${mm}-${dd}`;
     }
-
-    const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
-
-    reminders.push({
-      id: Date.now(),
-      title,
-      description,
-      date,
-      time,
-      isActive,
-    });
-
-    localStorage.setItem("sm_reminders", JSON.stringify(reminders));
-
-    showHome();
   });
+
+  // ------------------ INITIAL LOAD ------------------
+  renderReminders();
+  renderCalendar(currentMonth, currentYear);
+  showHome();
 });
-
-
-// ------------------ RENDER ------------------
-function renderReminders() {
-  const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
-
-  let filtered = [];
-
-  const today = new Date().toISOString().split("T")[0];
-  const now = new Date();
-
-  if (currentFilter === "today") {
-    filtered = reminders.filter((r) => r.date === today);
-
-  } else if (currentFilter === "week") {
-    filtered = reminders.filter((r) => {
-      const eventDate = new Date(r.date);
-      const diff = (eventDate - now) / (1000 * 60 * 60 * 24); // дні
-      return diff >= 0 && diff <= 7;
-    });
-
-  } else {
-    filtered = reminders; // "all"
-  }
-
-  remindersContainer.innerHTML = "";
-
-  if (!filtered.length) {
-    remindersContainer.innerHTML = `<p class="muted">Немає нагадувань.</p>`;
-    return;
-  }
-
-  filtered.forEach((r) => {
-    const card = document.createElement("div");
-    card.className = "reminder-card";
-
-    card.innerHTML = `
-      <div class="card-title">${escapeHtml(r.title)}</div>
-      <div class="card-sub">${escapeHtml(r.description || "")}</div>
-      <div class="card-meta">${escapeHtml(r.date)}${
-      r.time ? " • " + escapeHtml(r.time) : ""
-    }</div>
-    `;
-
-    remindersContainer.appendChild(card);
-  });
-}
-
-
-// ------------------ UTILS ------------------
-function escapeHtml(text) {
-  return String(text || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}

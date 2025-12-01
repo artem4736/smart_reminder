@@ -4,8 +4,15 @@ body { margin: 0; background: #f5f7fa; color: #222; }
 
 /* Layout */
 .app { display: flex; min-height: 100vh; }
-.sidebar { width: 200px; background: #fff; border-right: 1px solid #eee; padding: 20px; }
-.brand { color: #2b62d6; font-weight: 700; margin-bottom: 20px; }
+.sidebar {
+  width: 200px;
+  padding: 20px;
+  background: radial-gradient(circle at 10% 20%, #7aa2ff 0%, #536dff 40%, #3a4bb8 100%);
+  color: #fff;
+  position: relative;
+}
+.sidebar * { position: relative; z-index: 1; }
+.brand { color: #000; font-weight: 700; margin-bottom: 20px; }
 .nav-btn { display:block; width:100%; margin:8px 0; padding:10px; border-radius:8px; border:none; background:transparent; text-align:left; cursor:pointer; }
 .nav-btn.active { background:#eef4ff; color:#2b62d6; }
 .main { flex:1; }
@@ -30,8 +37,18 @@ body { margin: 0; background: #f5f7fa; color: #222; }
 .search-input { width:100%; padding:12px; border-radius:8px; border:1px solid #e5e7eb; }
 
 /* Cards */
-.reminder-cards { display:flex; gap:18px; flex-wrap:wrap; }
-.reminder-card { background:#fff; border-radius:8px; padding:18px; width:320px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); border:1px solid #f0f0f0; }
+.reminder-cards { display: flex; gap: 18px; flex-wrap: wrap; }
+.reminder-card {
+  background:#fff;
+  border-radius:8px;
+  padding:18px;
+  width:320px;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.06);
+  border:1px solid #f0f0f0;
+  outline: 2px solid #3e7bfa;
+  outline-offset: -1px;
+  position: relative;
+}
 .card-title { margin:0 0 6px 0; font-size:16px; font-weight:600; }
 .card-sub { margin:0 0 8px 0; color:#6b7280; font-size:13px; }
 .card-meta { color:#9ca3af; font-size:13px; display:flex; gap:10px; }
@@ -45,3 +62,173 @@ body { margin: 0; background: #f5f7fa; color: #222; }
 .buttons-row { display:flex; gap:12px; margin-top:12px; }
 .big { padding:12px 18px; border-radius:8px; }
 .secondary { background:#fff; border:1px solid #e5e7eb; cursor:pointer; }
+
+.edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: 0.2s;
+}
+.edit-btn:hover { opacity: 1; transform: scale(1.1); }
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 999;
+}
+.modal.hidden { display: none; }
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 500px;
+  box-shadow: 0 6px 26px rgba(0,0,0,0.15);
+}
+.modal-content input, .modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.modal-actions { display:flex; justify-content:flex-end; gap:10px; }
+.btn-blue { background:#2b62d6; color:#fff; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; }
+.btn-red { background:#f44336; color:#fff; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; }
+
+/* Calendar */
+.calendar-container { max-width: 420px; margin-top: 20px; user-select: none; }
+.calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.cal-arrow { padding:6px 12px; background:#eee; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-size:18px; }
+.cal-month-label { font-size:20px; font-weight:bold; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; }
+.calendar-grid div { padding:10px 0; text-align:center; border-radius:6px; background:#f7f7f7; border:1px solid #ddd; font-size:14px; }
+.calendar-grid .empty { background:transparent; border:none; }
+.calendar-grid .today {
+  background: #fff;               /* білий фон */
+  color: #000;                    /* чорний текст */
+  font-weight: bold;
+  border: 2px solid #3e7bfa;     /* синя рамка */
+  border-radius: 6px;
+  box-sizing: border-box;         /* щоб рамка не змінювала розмір клітинки */
+}
+.profile-logo { font-size: 28px; font-weight: bold; margin-bottom: 20px; text-align: center; }
+.profile-photo { margin-bottom: 20px; text-align: center; }
+.profile-info p { font-size: 16px; margin: 8px 0; text-align: center; }
+.profile-actions { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Важливе — активна дата перекриває today */
+.day.active-day { background:#4b7bec; color:#fff; border-radius:6px; font-weight:normal; }
+.day.today.active-day { background:#4b7bec; color:#fff; font-weight:normal; }
+/* ---- PROFILE PAGE ---- */
+
+.profile-card {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.profile-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-photo-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+.profile-photo-buttons button {
+  margin-bottom: 10px;
+}
+
+.profile-card label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.profile-card input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+
+.btn-blue {
+  background: #3e7bfa;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-blue:hover { background: #2c64db; }
+
+.btn-light {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-red {
+  background: #e53935;
+  color: #fff;
+  padding: 10px 14px;
+  border:none;
+  border-radius: 8px;
+  cursor:pointer;
+}
+
+.btn-red-outline {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.danger-card {
+  background: #fff5f5;
+  border: 1px solid #f8d0d0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.danger-title {
+  font-size: 18px;
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.danger-text {
+  color: #555;
+  margin-bottom: 15px;
+}
+`
