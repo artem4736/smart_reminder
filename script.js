@@ -1,129 +1,177 @@
-// ---- Утиліти ----
-function $(id){return document.getElementById(id)}
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-  $(id).classList.remove('hidden');
+// ------------------ AUTH ------------------
+if (!localStorage.getItem("sm_user")) {
+  window.location.href = "login.html";
 }
 
-// API helper (налаштуй baseUrl під свій бекенд)
-const baseUrl = "http://localhost:5000";
-async function apiFetch(path, opts = {}){
-  const res = await fetch(baseUrl + path, {
-    headers: {"Content-Type":"application/json"},
-    ...opts
+// ------------------ ELEMENTS ------------------
+const btnAdd = document.getElementById("addGlobalBtn");
+const btnLogoutSidebar = document.getElementById("btnLogoutSidebar");
+
+const btnHome = document.getElementById("btnHome");
+const btnCalendar = document.getElementById("btnCalendar");
+const btnSettings = document.getElementById("btnSettings");
+
+const screenHome = document.getElementById("screen-home");
+const screenCreate = document.getElementById("screen-create-page");
+const screenCalendar = document.getElementById("screen-calendar");
+const screenSettings = document.getElementById("screen-settings");
+
+const createForm = document.getElementById("createFormPage");
+const cancelCreateBtn = document.getElementById("cancelCreateBtn");
+const remindersContainer = document.getElementById("remindersContainer");
+
+const filterButtons = document.querySelectorAll(".filter-btn");
+let currentFilter = "all"; // default
+
+
+// ------------------ SCREEN SWITCHING ------------------
+function hideAllScreens() {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.add("hidden"));
+}
+
+function showScreen(screenEl) {
+  hideAllScreens();
+  screenEl.classList.remove("hidden");
+  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+}
+
+function showHome() {
+  showScreen(screenHome);
+  btnHome.classList.add("active");
+  renderReminders();
+}
+
+function showCreate() {
+  showScreen(screenCreate);
+}
+
+
+// ------------------ INIT ------------------
+document.addEventListener("DOMContentLoaded", () => {
+  showHome();
+  renderReminders();
+
+  btnAdd.addEventListener("click", () => {
+    createForm.reset();
+    showCreate();
   });
-  if(!res.ok){
-    const text = await res.text().catch(()=>null);
-    throw new Error(`API error ${res.status}: ${text || res.statusText}`);
-  }
-  return res.json().catch(()=>null);
-}
 
-// ---- Логін / простий «аккаунт» ----
-// У цій навчальній версії: при реєстрації / вході ми створюємо користувача через POST /users/register
-// і зберігаємо user в localStorage (в реальному проєкті — робити через токени/сесії).
-async function onLogin(e){
-  e.preventDefault();
-  const email = $('email').value.trim();
-  const password = $('password').value.trim();
-  if(!email || !password){ alert('Введіть email і пароль'); return; }
-
-  try{
-    // Для демо: реєстрація/логін одним запитом
-    const payload = { name: email.split('@')[0], email };
-    const user = await apiFetch('/users/register', { method: 'POST', body: JSON.stringify(payload) });
-    localStorage.setItem('sm_user', JSON.stringify(user));
-    $('password').value = '';
-    loadReminders();
-    showScreen('screen-home');
-  }catch(err){
-    alert('Не вдалося увійти: ' + err.message);
-  }
-}
-
-// ---- Завантаження нагадувань ----
-async function loadReminders(){
-  const user = JSON.parse(localStorage.getItem('sm_user')||'null');
-  try{
-    const items = await apiFetch('/reminders'); // очікується масив reminders з полем user_id
-    // фільтруємо по user_id, якщо бекенд повертає всі
-    const mine = user ? items.filter(r => r.user_id == user.id) : items;
-    renderReminders(mine);
-  }catch(err){
-    console.error(err);
-    document.getElementById('remindersContainer').innerHTML = '<p class="card">Не вдалося завантажити нагадування.</p>';
-  }
-}
-
-function renderReminders(arr){
-  const container = $('remindersContainer');
-  if(!arr.length){
-    container.innerHTML = '<div class="card">Список порожній. Натисніть «+ Додати нагадування»</div>';
-    return;
-  }
-  container.innerHTML = '';
-  arr.forEach(r => {
-    const div = document.createElement('div'); div.className = 'reminder';
-    const left = document.createElement('div');
-    left.innerHTML = `<strong>${r.title}</strong><div class="muted">${r.date} ${r.time} • ${r.priority||''}</div>`;
-    const right = document.createElement('div');
-    right.innerHTML = `<button class="secondary" onclick="openDetails(${r.id})">Деталі</button>`;
-    div.appendChild(left); div.appendChild(right);
-    container.appendChild(div);
+  cancelCreateBtn.addEventListener("click", () => {
+    showHome();
   });
-}
 
-// ---- Створення нагадування ----
-async function onCreate(e){
-  e.preventDefault();
-  const data = {
-    title: $('title').value.trim(),
-    date: $('date').value,
-    time: $('time').value,
-    type: $('type').value,
-    is_active: $('isActive').checked,
-    priority: 'medium'
-  };
-  if(!data.title || !data.date || !data.time){ alert('Заповніть усі поля'); return; }
+  btnHome.addEventListener("click", showHome);
 
-  try{
-    // Очікується, що бекенд реалізує POST /reminders і повертає створений об'єкт
-    await apiFetch('/reminders', { method: 'POST', body: JSON.stringify(data) });
-    $('createForm').reset();
-    loadReminders();
-    showScreen('screen-home');
-  }catch(err){
-    alert('Помилка збереження: ' + err.message);
-  }
-}
+  btnCalendar.addEventListener("click", () => {
+    showScreen(screenCalendar);
+    btnCalendar.classList.add("active");
+  });
 
-// ---- Події та ініціалізація ----
-function openDetails(id){
-  // Можна реалізувати показ детальної сторінки або модального вікна
-  alert('Відкрити деталі нагадування id=' + id);
-}
+  btnSettings.addEventListener("click", () => {
+    showScreen(screenSettings);
+    btnSettings.classList.add("active");
+  });
 
-document.addEventListener('DOMContentLoaded', () => {
-  // форми
-  $('loginForm').addEventListener('submit', onLogin);
-  $('createForm').addEventListener('submit', onCreate);
-  $('newBtn')?.addEventListener && $('newBtn').addEventListener('click', ()=>showScreen('screen-create'));
+  btnLogoutSidebar.addEventListener("click", () => {
+    localStorage.removeItem("sm_user");
+    window.location.href = "login.html";
+  });
 
-  // глобальна кнопка додавання
-  $('addGlobalBtn').addEventListener('click', ()=>showScreen('screen-create'));
-  $('cancelCreate').addEventListener('click', ()=>{ $('createForm').reset(); showScreen('screen-home'); });
+  // --- FILTER BUTTONS ---
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
 
-  // навігація
-  $('btnHome').addEventListener('click', ()=>{ showScreen('screen-home'); loadReminders(); });
-  $('btnCalendar').addEventListener('click', ()=>showScreen('screen-calendar'));
-  $('btnSettings').addEventListener('click', ()=>showScreen('screen-settings'));
-  $('btnLogoutSidebar').addEventListener('click', ()=>{ localStorage.removeItem('sm_user'); showScreen('screen-login'); });
+      currentFilter = btn.dataset.filter; // today / week / all
+      renderReminders();
+    });
+  });
 
-  // profile button
-  $('profileBtn').addEventListener('click', ()=>{ alert('Показати меню профілю (Профіль / Вийти)'); });
+  // --- CREATE FORM ---
+  createForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  // показати login або home в залежності від сесії
-  const user = localStorage.getItem('sm_user');
-  if(user){ showScreen('screen-home'); loadReminders(); } else { showScreen('screen-login'); }
+    const title = document.getElementById("titleInput").value.trim();
+    const description = document.getElementById("descriptionInput").value.trim();
+    const date = document.getElementById("dateInput").value;
+    const time = document.getElementById("timeInput").value;
+    const isActive = document.getElementById("isActiveInput").checked;
+
+    if (!title || !date) {
+      alert("Вкажіть назву та дату.");
+      return;
+    }
+
+    const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+
+    reminders.push({
+      id: Date.now(),
+      title,
+      description,
+      date,
+      time,
+      isActive,
+    });
+
+    localStorage.setItem("sm_reminders", JSON.stringify(reminders));
+
+    showHome();
+  });
 });
 
+
+// ------------------ RENDER ------------------
+function renderReminders() {
+  const reminders = JSON.parse(localStorage.getItem("sm_reminders") || "[]");
+
+  let filtered = [];
+
+  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+
+  if (currentFilter === "today") {
+    filtered = reminders.filter((r) => r.date === today);
+
+  } else if (currentFilter === "week") {
+    filtered = reminders.filter((r) => {
+      const eventDate = new Date(r.date);
+      const diff = (eventDate - now) / (1000 * 60 * 60 * 24); // дні
+      return diff >= 0 && diff <= 7;
+    });
+
+  } else {
+    filtered = reminders; // "all"
+  }
+
+  remindersContainer.innerHTML = "";
+
+  if (!filtered.length) {
+    remindersContainer.innerHTML = `<p class="muted">Немає нагадувань.</p>`;
+    return;
+  }
+
+  filtered.forEach((r) => {
+    const card = document.createElement("div");
+    card.className = "reminder-card";
+
+    card.innerHTML = `
+      <div class="card-title">${escapeHtml(r.title)}</div>
+      <div class="card-sub">${escapeHtml(r.description || "")}</div>
+      <div class="card-meta">${escapeHtml(r.date)}${
+      r.time ? " • " + escapeHtml(r.time) : ""
+    }</div>
+    `;
+
+    remindersContainer.appendChild(card);
+  });
+}
+
+
+// ------------------ UTILS ------------------
+function escapeHtml(text) {
+  return String(text || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}

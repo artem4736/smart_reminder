@@ -4,15 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Smart Reminder</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
- 
 <script>
+  // простий захист сторінки
   if (!localStorage.getItem("sm_user")) {
       window.location.href = "login.html";
   }
 </script>
+
   <div class="app">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -32,49 +33,32 @@
         <div class="left"></div>
         <div class="right">
           <button id="addGlobalBtn" class="primary">+ Додати нагадування</button>
-          <button id="profileBtn" class="avatar">AP</button>
+          <button id="profileBtn" class="avatar">👤</button>
         </div>
       </header>
 
       <!-- Content -->
       <main class="content">
-       
 
         <!-- Home screen -->
-        <section id="screen-home" class="screen hidden">
-          <h2>Мої нагадування</h2>
-          <div class="filters">
-            <button data-filter="today" class="filter">Сьогодні</button>
-            <button data-filter="week" class="filter">Тиждень</button>
-            <button data-filter="all" class="filter active">Усі</button>
+        <section id="screen-home" class="screen">
+          <h2 class="home-title">Мої нагадування</h2>
+          <p class="home-subtitle">Керуйте своїми завданнями та дедлайнами</p>
+
+          <div class="filters-row">
+              <button data-filter="today" class="filter-btn">Сьогодні</button>
+              <button data-filter="week" class="filter-btn">Тиждень</button>
+              <button data-filter="all" class="filter-btn active">Усі</button>
           </div>
 
-          <div id="remindersContainer" class="list"></div>
+          <div class="search-row">
+              <input type="text" id="searchInput" class="search-input" placeholder="Пошук нагадувань..." />
+          </div>
+
+          <div id="remindersContainer" class="reminder-cards"></div>
         </section>
 
-        <!-- Create screen -->
-        <section id="screen-create" class="screen hidden">
-          <h2>Нове нагадування</h2>
-          <form id="createForm" class="card">
-            <input id="title" type="text" placeholder="Назва" required />
-            <input id="date" type="date" required />
-            <input id="time" type="time" required />
-            <select id="type">
-              <option value="lecture">Лекція</option>
-              <option value="deadline">Дедлайн</option>
-              <option value="event">Подія</option>
-            </select>
-            <label class="row-inline">
-              <input id="isActive" type="checkbox" checked /> Надсилати нагадування
-            </label>
-            <div class="row">
-              <button type="submit" class="primary">Зберегти</button>
-              <button type="button" id="cancelCreate" class="secondary">Скасувати</button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Simple placeholders for Calendar / Settings screens -->
+        <!-- Calendar / Settings placeholders -->
         <section id="screen-calendar" class="screen hidden">
           <h2>Календар (в розробці)</h2>
           <p>Перегляд подій по днях/тижнях/місяцях — планується.</p>
@@ -84,10 +68,47 @@
           <h2>Налаштування</h2>
           <p>Тут будуть опції теми, мови та сповіщень.</p>
         </section>
+
+        <!-- Create screen — лише ОДНА секція (унікальний id) -->
+        <section id="screen-create-page" class="screen hidden create-page">
+          <h2 class="page-title">Нове нагадування</h2>
+          <p class="page-subtitle">Заповніть деталі вашого завдання</p>
+
+          <form id="createFormPage" class="create-card">
+              <label>Назва події</label>
+              <input id="titleInput" name="title" type="text" placeholder="Наприклад, Математика" required />
+
+              <label>Опис</label>
+              <textarea id="descriptionInput" name="description" placeholder="Опишіть завдання детально..." rows="4"></textarea>
+
+              <div class="row-2">
+                  <div>
+                      <label>Дата</label>
+                      <input id="dateInput" name="date" type="date" required />
+                  </div>
+
+                  <div>
+                      <label>Час</label>
+                      <input id="timeInput" name="time" type="time" />
+                  </div>
+              </div>
+
+              <label class="toggle-row">
+                  Надсилати нагадування
+                  <input id="isActiveInput" name="isActive" type="checkbox" checked />
+              </label>
+
+              <div class="buttons-row">
+                  <button type="button" id="cancelCreateBtn" class="secondary big">Скасувати</button>
+                  <button type="submit" class="primary big">Зберегти</button>
+              </div>
+          </form>
+        </section>
+
       </main>
     </div>
   </div>
 
- <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
