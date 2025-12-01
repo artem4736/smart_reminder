@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Reminder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">Smart Reminder</div>
+      <nav>
+        <button id="btnHome" class="nav-btn active">Головна</button>
+        <button id="btnCalendar" class="nav-btn">Календар</button>
+        <button id="btnSettings" class="nav-btn">Налаштування</button>
+        <button id="btnLogoutSidebar" class="nav-btn">Вийти</button>
+      </nav>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="left"></div>
+        <div class="right">
+          <button id="addGlobalBtn" class="primary">+ Додати нагадування</button>
+          <button id="profileBtn" class="avatar">AP</button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content">
+        <!-- Login screen -->
+        <section id="screen-login" class="screen">
+          <h2>Вхід</h2>
+          <form id="loginForm" class="card">
+            <input id="email" type="email" placeholder="Email" required />
+            <input id="password" type="password" placeholder="Пароль" required />
+            <div class="row">
+              <button type="submit" class="primary">Увійти</button>
+              <button type="button" id="toRegister" class="link">Реєстрація</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Home screen -->
+        <section id="screen-home" class="screen hidden">
+          <h2>Мої нагадування</h2>
+          <div class="filters">
+            <button data-filter="today" class="filter">Сьогодні</button>
+            <button data-filter="week" class="filter">Тиждень</button>
+            <button data-filter="all" class="filter active">Усі</button>
+          </div>
+
+          <div id="remindersContainer" class="list"></div>
+        </section>
+
+        <!-- Create screen -->
+        <section id="screen-create" class="screen hidden">
+          <h2>Нове нагадування</h2>
+          <form id="createForm" class="card">
+            <input id="title" type="text" placeholder="Назва" required />
+            <input id="date" type="date" required />
+            <input id="time" type="time" required />
+            <select id="type">
+              <option value="lecture">Лекція</option>
+              <option value="deadline">Дедлайн</option>
+              <option value="event">Подія</option>
+            </select>
+            <label class="row-inline">
+              <input id="isActive" type="checkbox" checked /> Надсилати нагадування
+            </label>
+            <div class="row">
+              <button type="submit" class="primary">Зберегти</button>
+              <button type="button" id="cancelCreate" class="secondary">Скасувати</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Simple placeholders for Calendar / Settings screens -->
+        <section id="screen-calendar" class="screen hidden">
+          <h2>Календар (в розробці)</h2>
+          <p>Перегляд подій по днях/тижнях/місяцях — планується.</p>
+        </section>
+
+        <section id="screen-settings" class="screen hidden">
+          <h2>Налаштування</h2>
+          <p>Тут будуть опції теми, мови та сповіщень.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
