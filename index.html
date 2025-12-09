@@ -59,7 +59,12 @@
       <div class="left"></div>
       <div class="right">
         <!-- КНОПКУ ЗВІДСИ ВИДАЛЕНО -->
-        <button id="profileBtn" class="avatar">👤</button>
+        <button id="profileBtn" class="avatar">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+  </svg>
+</button>
+
       </div>
     </header>
 
@@ -111,11 +116,63 @@
 
       <!-- SETTINGS -->
       <section id="screen-settings" class="screen hidden">
-        <h2>Налаштування</h2>
-        <p>Тут будуть опції теми, мови та сповіщень.</p>
-      </section>
+  <h2 class="page-title">Налаштування</h2>
 
-      <!-- CREATE SCREEN -->
+  <!-- Зовнішній вигляд -->
+  <div class="settings-card">
+    <h3 class="settings-title">Зовнішній вигляд</h3>
+
+    <label class="settings-label">Тема інтерфейсу</label>
+    <div class="theme-row">
+      <button id="themeLight" class="theme-btn active">Світла</button>
+      <button id="themeDark" class="theme-btn">Темна</button>
+    </div>
+
+    <label class="settings-label">Мова інтерфейсу</label>
+    <select id="languageSelect" class="settings-select">
+      <option value="uk">Українська</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+  <!-- Сповіщення -->
+  <div class="settings-card">
+    <h3 class="settings-title">Сповіщення</h3>
+
+    <label class="toggle-row">
+      Увімкнути сповіщення
+      <input type="checkbox" id="notificationsToggle" checked>
+    </label>
+  </div>
+
+  <!-- Інтеграції -->
+  <div class="settings-card">
+    <h3 class="settings-title">Інтеграції</h3>
+    <p class="small-text">Синхронізуйте нагадування з Google Calendar</p>
+
+    <button id="googleSyncBtn" class="btn-blue">Підключити Google Calendar</button>
+  </div>
+
+  <!-- Формат дати та часу -->
+  <div class="settings-card">
+    <h3 class="settings-title">Формат дати та часу</h3>
+
+    <label class="settings-label">Формат дати</label>
+    <select id="dateFormatSelect" class="settings-select">
+      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+    </select>
+
+    <label class="settings-label">Формат часу</label>
+    <select id="timeFormatSelect" class="settings-select">
+      <option value="24">24-годинний</option>
+      <option value="12">12-годинний</option>
+    </select>
+  </div>
+</section>
+
+           <!-- CREATE SCREEN -->
       <section id="screen-create-page" class="screen hidden create-page">
 
         <h2 class="page-title">Нове нагадування</h2>

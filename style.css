@@ -231,4 +231,200 @@ body { margin: 0; background: #f5f7fa; color: #222; }
   color: #555;
   margin-bottom: 15px;
 }
+/* --- SETTINGS PAGE --- */
+
+.settings-card {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+  margin-bottom: 25px;
+}
+
+.settings-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.settings-label {
+  display: block;
+  margin: 10px 0 6px;
+  font-weight: 600;
+}
+
+.settings-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  margin-bottom: 14px;
+  font-size: 15px;
+  background: #fff;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Тема інтерфейсу – кнопки Світла / Темна */
+.theme-row {
+  display: flex;
+  gap: 12px;
+  margin: 10px 0 18px;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  background: #f3f4f6;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.theme-btn.active {
+  background: #3e7bfa;
+  color: #fff;
+  border-color: #3e7bfa;
+}
+
+.small-text {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+/* ================================
+   🌙 ТЕМНА ТЕМА
+   Активується при: <body data-theme="dark">
+================================= */
+
+body[data-theme="dark"] {
+  background: #0f1115;
+  color: #e5e7eb;
+}
+
+/* Sidebar */
+body[data-theme="dark"] .sidebar {
+  background: radial-gradient(circle at 10% 20%, #1f2c46 0%, #151d33 40%, #0f1527 100%);
+  color: #fff;
+}
+
+body[data-theme="dark"] .nav-btn {
+  color: #d1d5db;
+}
+body[data-theme="dark"] .nav-btn.active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+
+body[data-theme="dark"] .brand {
+  color: #fff;
+}
+
+/* Topbar */
+body[data-theme="dark"] .topbar {
+  background: #1a1d22;
+  border-bottom: 1px solid #2a2f38;
+}
+
+/* General UI */
+body[data-theme="dark"] .screen,
+body[data-theme="dark"] .content {
+  background: transparent;
+  color: #e5e7eb;
+}
+
+/* Inputs, selects */
+body[data-theme="dark"] input,
+body[data-theme="dark"] textarea,
+body[data-theme="dark"] select {
+  background: #1b1e23;
+  border: 1px solid #2c313a;
+  color: #e5e7eb;
+}
+
+/* Cards */
+body[data-theme="dark"] .reminder-card,
+body[data-theme="dark"] .create-card,
+body[data-theme="dark"] .profile-card,
+body[data-theme="dark"] .settings-card {
+  background: #1a1d22;
+  border: 1px solid #2a2f38;
+  color: #e5e7eb;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
+body[data-theme="dark"] .card-sub,
+body[data-theme="dark"] .card-meta {
+  color: #9ca3af;
+}
+
+/* Buttons */
+body[data-theme="dark"] .primary,
+body[data-theme="dark"] .btn-blue {
+  background: #3b82f6;
+}
+
+body[data-theme="dark"] .secondary,
+body[data-theme="dark"] .btn-light {
+  background: #1f242b;
+  border: 1px solid #2a3039;
+  color: #e5e7eb;
+}
+
+body[data-theme="dark"] .btn-red {
+  background: #dc2626;
+}
+
+/* Modal */
+body[data-theme="dark"] .modal-content {
+  background: #1a1d22;
+  color: #e5e7eb;
+  border: 1px solid #2a2f38;
+}
+
+/* Calendar */
+body[data-theme="dark"] .calendar-grid div {
+  background: #1b1e23;
+  border: 1px solid #2a2f38;
+  color: #e5e7eb;
+}
+
+body[data-theme="dark"] .calendar-grid .today {
+  background: #111418;
+  border: 2px solid #3b82f6;
+  color: #fff;
+}
+
+body[data-theme="dark"] .day.active-day {
+  background: #3b82f6;
+  color: #fff;
+}
+
+/* Profile & danger card */
+body[data-theme="dark"] .danger-card {
+  background: #2a0f0f;
+  border: 1px solid #7f1d1d;
+  color: #ffb3b3;
+}
+
+.avatar svg {
+  width: 22px;
+  height: 22px;
+}
+body[data-theme="dark"] .avatar {
+  color: #fff;
+}
+body[data-theme="light"] .avatar {
+  color: #000;
+}
+
 `

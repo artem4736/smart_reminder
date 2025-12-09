@@ -39,6 +39,13 @@ window.addEventListener("DOMContentLoaded", () => {
   const changePasswordBtn = document.getElementById("changePasswordBtn");
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
+// SETTINGS ELEMENTS
+const themeLight = document.getElementById("themeLight");
+const themeDark = document.getElementById("themeDark");
+const langSelect = document.getElementById("languageSelect");
+const notifyToggle = document.getElementById("notificationsToggle");
+const dateFormatSel = document.getElementById("dateFormatSelect");
+const timeFormatSel = document.getElementById("timeFormatSelect");
   // ------------------ STATE ------------------
   let currentFilter = "all";
   let currentSearch = "";
@@ -350,8 +357,55 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+function loadSettings() {
+  const settings = JSON.parse(localStorage.getItem("sm_settings") || "{}");
+
+  document.body.dataset.theme = settings.theme || "light";
+
+  langSelect.value = settings.lang || "uk";
+  notifyToggle.checked = settings.notify ?? true;
+  dateFormatSel.value = settings.dateFormat || "DD/MM/YYYY";
+  timeFormatSel.value = settings.timeFormat || "24";
+
+  // кнопки теми
+  themeLight.classList.toggle("active", settings.theme === "light");
+  themeDark.classList.toggle("active", settings.theme === "dark");
+}
+function saveSettings() {
+  const settings = {
+    theme: document.body.dataset.theme,
+    lang: langSelect.value,
+    notify: notifyToggle.checked,
+    dateFormat: dateFormatSel.value,
+    timeFormat: timeFormatSel.value
+  };
+  localStorage.setItem("sm_settings", JSON.stringify(settings));
+}
+
+themeLight.addEventListener("click", () => {
+  document.body.dataset.theme = "light";
+  themeLight.classList.add("active");
+  themeDark.classList.remove("active");
+  saveSettings();
+});
+
+themeDark.addEventListener("click", () => {
+  document.body.dataset.theme = "dark";
+  themeDark.classList.add("active");
+  themeLight.classList.remove("active");
+  saveSettings();
+});
+
+langSelect.addEventListener("change", saveSettings);
+notifyToggle.addEventListener("change", saveSettings);
+dateFormatSel.addEventListener("change", saveSettings);
+timeFormatSel.addEventListener("change", saveSettings);
+
+
+
   // ------------------ INITIAL LOAD ------------------
   renderReminders();
   renderCalendar(currentMonth, currentYear);
+  loadSettings();
   showHome();
 });
