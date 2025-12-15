@@ -85,7 +85,7 @@ const timeFormatSel = document.getElementById("timeFormatSelect");
   if (profileBtn) {
     profileBtn.addEventListener("click", () => {
       hideAllScreens();
-      screenProfile.classList.remove("hidden");
+      screenSettings.classList.remove("hidden");
     });
   }
 
@@ -409,3 +409,68 @@ timeFormatSel.addEventListener("change", saveSettings);
   loadSettings();
   showHome();
 });
+// ---------- ELEMENTS ----------
+const avatarImg = document.getElementById("profileAvatar");
+const photoInput = document.getElementById("photoInput");
+const uploadBtn = document.getElementById("uploadPhotoBtn");
+const deletePhotoBtn = document.getElementById("deletePhotoBtn");
+
+const nameInput = document.getElementById("profileName");
+const emailInput = document.getElementById("profileEmail");
+const saveProfileBtn = document.getElementById("saveProfileBtn");
+const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+
+// ---------- LOAD DATA ----------
+const profile = JSON.parse(localStorage.getItem("profile")) || {};
+
+if (profile.photo) avatarImg.src = profile.photo;
+if (profile.name) nameInput.value = profile.name;
+if (profile.email) emailInput.value = profile.email;
+
+// ---------- UPLOAD PHOTO ----------
+uploadBtn.addEventListener("click", () => {
+  photoInput.click();
+});
+
+photoInput.addEventListener("change", () => {
+  const file = photoInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    avatarImg.src = reader.result;
+    profile.photo = reader.result;
+    localStorage.setItem("profile", JSON.stringify(profile));
+  };
+  reader.readAsDataURL(file);
+});
+
+// ---------- DELETE PHOTO ----------
+deletePhotoBtn.addEventListener("click", () => {
+  avatarImg.src = "";
+  delete profile.photo;
+  localStorage.setItem("profile", JSON.stringify(profile));
+});
+
+// ---------- SAVE PROFILE ----------
+saveProfileBtn.addEventListener("click", () => {
+  profile.name = nameInput.value;
+  profile.email = emailInput.value;
+  localStorage.setItem("profile", JSON.stringify(profile));
+  alert("Зміни збережено");
+});
+
+// ---------- DELETE ACCOUNT ----------
+deleteAccountBtn.addEventListener("click", () => {
+  if (confirm("Ви впевнені? Усі дані буде видалено.")) {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+});
+function showScreen(screenId) {
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.add("hidden");
+  });
+
+  document.getElementById(screenId).classList.remove("hidden");
+}

@@ -59,10 +59,30 @@
       <div class="left"></div>
       <div class="right">
         <!-- КНОПКУ ЗВІДСИ ВИДАЛЕНО -->
-        <button id="profileBtn" class="avatar">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+        <button id="profileBtn" class="avatar-btn">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="#3b82f6">
+    <circle cx="12" cy="8" r="4"></circle>
+    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
   </svg>
+</button>
+
+<div id="profileMenu" class="profile-menu hidden">
+  <button class="profile-item">
+    <span>👤</span>
+    <span>Мій профіль</span>
+  </button>
+
+  <button class="profile-item">
+    <span>⚙️</span>
+    <span>Налаштування</span>
+  </button>
+
+  <button class="profile-item logout">
+    <span>🚪</span>
+    <span>Вийти</span>
+  </button>
+</div>
+ 
 </button>
 
       </div>
@@ -116,59 +136,47 @@
 
       <!-- SETTINGS -->
       <section id="screen-settings" class="screen hidden">
-  <h2 class="page-title">Налаштування</h2>
+  <h2>Профіль</h2>
 
-  <!-- Зовнішній вигляд -->
-  <div class="settings-card">
-    <h3 class="settings-title">Зовнішній вигляд</h3>
+  <!-- Фото профілю -->
+  <div class="card">
+    <h3>Фото профілю</h3>
 
-    <label class="settings-label">Тема інтерфейсу</label>
-    <div class="theme-row">
-      <button id="themeLight" class="theme-btn active">Світла</button>
-      <button id="themeDark" class="theme-btn">Темна</button>
+    <div class="avatar-row">
+      <img id="profileAvatar" class="profile-avatar" src="" alt="avatar">
+
+      <div class="avatar-actions">
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <button id="uploadPhotoBtn" class="secondary">Завантажити фото</button>
+        <button id="deletePhotoBtn" class="danger">Видалити</button>
+      </div>
     </div>
-
-    <label class="settings-label">Мова інтерфейсу</label>
-    <select id="languageSelect" class="settings-select">
-      <option value="uk">Українська</option>
-      <option value="en">English</option>
-    </select>
   </div>
 
-  <!-- Сповіщення -->
-  <div class="settings-card">
-    <h3 class="settings-title">Сповіщення</h3>
+  <!-- Особиста інформація -->
+  <div class="card">
+    <h3>Особиста інформація</h3>
 
-    <label class="toggle-row">
-      Увімкнути сповіщення
-      <input type="checkbox" id="notificationsToggle" checked>
-    </label>
+    <label>Імʼя</label>
+    <input id="profileName" type="text">
+
+    <label>Email</label>
+    <input id="profileEmail" type="email">
+
+    <button id="saveProfileBtn" class="primary">Зберегти зміни</button>
   </div>
 
-  <!-- Інтеграції -->
-  <div class="settings-card">
-    <h3 class="settings-title">Інтеграції</h3>
-    <p class="small-text">Синхронізуйте нагадування з Google Calendar</p>
-
-    <button id="googleSyncBtn" class="btn-blue">Підключити Google Calendar</button>
+  <!-- Безпека -->
+  <div class="card">
+    <h3>Безпека</h3>
+    <button class="secondary">Змінити пароль</button>
   </div>
 
-  <!-- Формат дати та часу -->
-  <div class="settings-card">
-    <h3 class="settings-title">Формат дати та часу</h3>
-
-    <label class="settings-label">Формат дати</label>
-    <select id="dateFormatSelect" class="settings-select">
-      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-    </select>
-
-    <label class="settings-label">Формат часу</label>
-    <select id="timeFormatSelect" class="settings-select">
-      <option value="24">24-годинний</option>
-      <option value="12">12-годинний</option>
-    </select>
+  <!-- Небезпечна зона -->
+  <div class="card danger-zone">
+    <h3>Небезпечна зона</h3>
+    <p>Після видалення акаунта всі дані буде втрачено.</p>
+    <button id="deleteAccountBtn" class="danger">Видалити акаунт</button>
   </div>
 </section>
 
@@ -209,55 +217,6 @@
 
         </form>
       </section>
-<!-- PROFILE SCREEN -->
-<section id="screen-profile" class="screen hidden">
-  <h2 class="page-title">Профіль</h2>
-
-  <!-- ФОТО ПРОФІЛЮ -->
-  <div class="profile-card">
-      <h3 class="section-title">Фото профілю</h3>
-
-      <div class="profile-photo-row">
-          <img id="profilePhoto" src="avatar.png" class="profile-photo-img">
-
-          <div class="profile-photo-buttons">
-              <button class="btn-light" id="uploadPhotoBtn">⬆ Завантажити фото</button>
-              <button class="btn-red-outline" id="deletePhotoBtn">Видалити</button>
-          </div>
-      </div>
-  </div>
-
-  <!-- ОСОБИСТА ІНФОРМАЦІЯ -->
-  <div class="profile-card">
-      <h3 class="section-title">Особиста інформація</h3>
-
-      <label>Ім’я</label>
-      <input type="text" id="profileNameInput">
-
-      <label>Email</label>
-      <input type="email" id="profileEmailInput">
-
-      <button class="btn-blue" id="saveProfileBtn">Зберегти зміни</button>
-  </div>
-
-  <!-- БЕЗПЕКА -->
-  <div class="profile-card">
-      <h3 class="section-title">Безпека</h3>
-      <button id="changePasswordBtn" class="btn-light">Змінити пароль</button>
-  </div>
-
-  <!-- НЕБЕЗПЕЧНА ЗОНА -->
-  <div class="danger-card">
-      <h3 class="danger-title">Небезпечна зона</h3>
-      <p class="danger-text">
-        Після видалення акаунта всі ваші дані буде безповоротно втрачено.
-        Будь ласка, будьте обережні.
-      </p>
-
-      <button id="deleteAccountBtn" class="btn-red">❗ Видалити акаунт</button>
-  </div>
-
-</section>
 
     </main>
   </div>

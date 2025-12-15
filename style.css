@@ -426,5 +426,45 @@ body[data-theme="dark"] .avatar {
 body[data-theme="light"] .avatar {
   color: #000;
 }
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1px solid #d1d5db;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.danger-zone {
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+}
 
 `
