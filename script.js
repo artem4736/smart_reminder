@@ -85,7 +85,7 @@ const timeFormatSel = document.getElementById("timeFormatSelect");
   if (profileBtn) {
     profileBtn.addEventListener("click", () => {
       hideAllScreens();
-      screenSettings.classList.remove("hidden");
+      screenProfile.classList.remove("hidden");
     });
   }
 
@@ -428,7 +428,7 @@ if (profile.name) nameInput.value = profile.name;
 if (profile.email) emailInput.value = profile.email;
 
 // ---------- UPLOAD PHOTO ----------
-uploadBtn.addEventListener("click", () => {
+uploadPhotoBtn.addEventListener("click", () => {
   photoInput.click();
 });
 

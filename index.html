@@ -136,37 +136,83 @@
 
       <!-- SETTINGS -->
       <section id="screen-settings" class="screen hidden">
-  <h2>Профіль</h2>
+  <h2 class="page-title">Налаштування</h2>
+ <!-- Зовнішній вигляд -->
+  <div class="settings-card">
+    <h3 class="settings-title">Зовнішній вигляд</h3>
+   <label class="settings-label">Тема інтерфейсу</label>
+    <div class="theme-row">
+      <button id="themeLight" class="theme-btn active">Світла</button>
+      <button id="themeDark" class="theme-btn">Темна</button>
+    </div>
+ <label class="settings-label">Мова інтерфейсу</label>
+    <select id="languageSelect" class="settings-select">
+      <option value="uk">Українська</option>
+      <option value="en">English</option>
+    </select>
+  </div>
 
-  <!-- Фото профілю -->
+   <!-- Сповіщення -->
+  <div class="settings-card">
+    <h3 class="settings-title">Сповіщення</h3>
+
+    <label class="toggle-row">
+      Увімкнути сповіщення
+      <input type="checkbox" id="notificationsToggle" checked>
+    </label>
+  </div>
+
+    <!-- Інтеграції -->
+  <div class="settings-card">
+    <h3 class="settings-title">Інтеграції</h3>
+    <p class="small-text">Синхронізуйте нагадування з Google Calendar</p>
+
+     <button id="googleSyncBtn" class="btn-blue">Підключити Google Calendar</button>
+  </div>
+
+  <!-- Формат дати та часу -->
+  <div class="settings-card">
+    <h3 class="settings-title">Формат дати та часу</h3>
+
+    <label class="settings-label">Формат дати</label>
+    <select id="dateFormatSelect" class="settings-select">
+      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+    </select>
+
+    <label class="settings-label">Формат часу</label>
+    <select id="timeFormatSelect" class="settings-select">
+      <option value="24">24-годинний</option>
+      <option value="12">12-годинний</option>
+    </select>
+  </div>
+</section>
+<!-- PROFILE SCREEN -->
+<section id="screen-profile" class="screen hidden">
+  <h2>Профіль</h2>
+ <!-- Фото профілю -->
   <div class="card">
     <h3>Фото профілю</h3>
-
-    <div class="avatar-row">
+ <div class="avatar-row">
       <img id="profileAvatar" class="profile-avatar" src="" alt="avatar">
-
-      <div class="avatar-actions">
+ <div class="avatar-actions">
         <input type="file" id="photoInput" accept="image/*" hidden>
         <button id="uploadPhotoBtn" class="secondary">Завантажити фото</button>
         <button id="deletePhotoBtn" class="danger">Видалити</button>
       </div>
     </div>
   </div>
-
-  <!-- Особиста інформація -->
+<!-- Особиста інформація -->
   <div class="card">
     <h3>Особиста інформація</h3>
-
-    <label>Імʼя</label>
+ <label>Імʼя</label>
     <input id="profileName" type="text">
-
-    <label>Email</label>
+<label>Email</label>
     <input id="profileEmail" type="email">
-
-    <button id="saveProfileBtn" class="primary">Зберегти зміни</button>
+<button id="saveProfileBtn" class="primary">Зберегти зміни</button>
   </div>
-
-  <!-- Безпека -->
+ <!-- Безпека -->
   <div class="card">
     <h3>Безпека</h3>
     <button class="secondary">Змінити пароль</button>
@@ -178,8 +224,9 @@
     <p>Після видалення акаунта всі дані буде втрачено.</p>
     <button id="deleteAccountBtn" class="danger">Видалити акаунт</button>
   </div>
-</section>
 
+
+</section>
            <!-- CREATE SCREEN -->
       <section id="screen-create-page" class="screen hidden create-page">
 
