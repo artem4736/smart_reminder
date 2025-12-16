@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Reminder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- Модальне вікно -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="editTitle">Редагувати нагадування</h2>
+
+    <label>Назва</label>
+    <input type="text" id="edit-name">
+
+    <label>Опис</label>
+    <textarea id="edit-desc"></textarea>
+
+    <label>Дата дедлайну</label>
+    <input type="date" id="edit-date">
+
+    <label>Час</label>
+    <input type="time" id="edit-time">
+
+    <div class="modal-actions">
+      <button id="saveEdit" class="btn-blue">Зберегти</button>
+      <button id="closeModal" class="btn-red">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  if (!localStorage.getItem("sm_user")) {
+      window.location.href = "login.html";
+  }
+</script>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Smart Reminder</div>
+    <nav>
+      <button id="btnHome" class="nav-btn active">Головна</button>
+      <button id="btnCalendar" class="nav-btn">Календар</button>
+      <button id="btnSettings" class="nav-btn">Налаштування</button>
+      <button id="btnLogoutSidebar" class="nav-btn">Вийти</button>
+    </nav>
+  </aside>
+
+  <!-- Main area -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="left"></div>
+      <div class="right">
+        <!-- КНОПКУ ЗВІДСИ ВИДАЛЕНО -->
+        <button id="profileBtn" class="avatar-btn">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="#3b82f6">
+    <circle cx="12" cy="8" r="4"></circle>
+    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+  </svg>
+</button>
+
+<div id="profileMenu" class="profile-menu hidden">
+  <button class="profile-item">
+    <span>👤</span>
+    <span>Мій профіль</span>
+  </button>
+
+  <button class="profile-item">
+    <span>⚙️</span>
+    <span>Налаштування</span>
+  </button>
+
+  <button class="profile-item logout">
+    <span>🚪</span>
+    <span>Вийти</span>
+  </button>
+</div>
+ 
+</button>
+
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- HOME -->
+      <section id="screen-home" class="screen active">
+        <h2 class="home-title">Мої нагадування</h2>
+        <p class="home-subtitle">Керуйте своїми завданнями та дедлайнами</p>
+
+        <div class="filters-row">
+          <button data-filter="today" class="filter-btn">Сьогодні</button>
+          <button data-filter="week" class="filter-btn">Тиждень</button>
+          <button data-filter="all" class="filter-btn active">Усі</button>
+        </div>
+
+        <div class="search-row">
+          <input id="searchInput" class="search-input" type="text" placeholder="Пошук нагадувань...">
+        </div>
+
+        <!-- НОВА КНОПКА НА СТОРІНЦІ -->
+        <button id="addGlobalBtn" class="primary" style="margin: 20px 0;">
+          + Додати нагадування
+        </button>
+
+        <div id="remindersContainer" class="reminder-cards"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="screen-calendar" class="screen hidden">
+
+        <h2 class="page-title">Календар</h2>
+
+        <div class="calendar-header">
+          <button id="prevMonth">←</button>
+          <h3 id="calendarMonth"></h3>
+          <button id="nextMonth">→</button>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <h3 class="events-title">Події на день</h3>
+        <div id="dayEvents" class="day-events"></div>
+
+        <button id="addFromCalendar" class="primary" style="margin-top:20px;">
+          + Додати нагадування
+        </button>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="screen-settings" class="screen hidden">
+  <h2 class="page-title">Налаштування</h2>
+ <!-- Зовнішній вигляд -->
+  <div class="settings-card">
+    <h3 class="settings-title">Зовнішній вигляд</h3>
+   <label class="settings-label">Тема інтерфейсу</label>
+    <div class="theme-row">
+      <button id="themeLight" class="theme-btn active">Світла</button>
+      <button id="themeDark" class="theme-btn">Темна</button>
+    </div>
+ <label class="settings-label">Мова інтерфейсу</label>
+    <select id="languageSelect" class="settings-select">
+      <option value="uk">Українська</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+   <!-- Сповіщення -->
+  <div class="settings-card">
+    <h3 class="settings-title">Сповіщення</h3>
+
+    <label class="toggle-row">
+      Увімкнути сповіщення
+      <input type="checkbox" id="notificationsToggle" checked>
+    </label>
+  </div>
+
+    <!-- Інтеграції -->
+  <div class="settings-card">
+    <h3 class="settings-title">Інтеграції</h3>
+    <p class="small-text">Синхронізуйте нагадування з Google Calendar</p>
+
+     <button id="googleSyncBtn" class="btn-blue">Підключити Google Calendar</button>
+  </div>
+
+  <!-- Формат дати та часу -->
+  <div class="settings-card">
+    <h3 class="settings-title">Формат дати та часу</h3>
+
+    <label class="settings-label">Формат дати</label>
+    <select id="dateFormatSelect" class="settings-select">
+      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+    </select>
+
+    <label class="settings-label">Формат часу</label>
+    <select id="timeFormatSelect" class="settings-select">
+      <option value="24">24-годинний</option>
+      <option value="12">12-годинний</option>
+    </select>
+  </div>
+</section>
+<!-- PROFILE SCREEN -->
+<section id="screen-profile" class="screen hidden">
+  <h2>Профіль</h2>
+ <!-- Фото профілю -->
+  <div class="card">
+    <h3>Фото профілю</h3>
+ <div class="avatar-row">
+      <img id="profileAvatar" class="profile-avatar" src="" alt="avatar">
+ <div class="avatar-actions">
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <button id="uploadPhotoBtn" class="secondary">Завантажити фото</button>
+        <button id="deletePhotoBtn" class="danger">Видалити</button>
+      </div>
+    </div>
+  </div>
+<!-- Особиста інформація -->
+<div class="card profile-form">
+  <h3>Особиста інформація</h3>
+
+  <label>Імʼя</label>
+  <input id="profileName" type="text">
+
+  <label>Email</label>
+  <input id="profileEmail" type="email">
+
+  <button id="saveProfileBtn" class="primary">Зберегти зміни</button>
+  </div>
+ <!-- Безпека -->
+  <div class="card">
+    <h3>Безпека</h3>
+    <button id="changePasswordBtn" class="secondary">
+  Змінити пароль
+</button>
+  </div>
+
+  <!-- Небезпечна зона -->
+  <div class="card danger-zone">
+    <h3>Небезпечна зона</h3>
+    <p>Після видалення акаунта всі дані буде втрачено.</p>
+    <button id="deleteAccountBtn" class="danger">Видалити акаунт</button>
+  </div>
+
+
+</section>
+           <!-- CREATE SCREEN -->
+      <section id="screen-create-page" class="screen hidden create-page">
+
+        <h2 class="page-title">Нове нагадування</h2>
+        <p class="page-subtitle">Заповніть деталі вашого завдання</p>
+
+        <form id="createFormPage" class="create-card">
+
+          <label>Назва</label>
+          <input id="titleInput" type="text" required>
+
+          <label>Опис</label>
+          <textarea id="descriptionInput"></textarea>
+
+          <div class="row-2">
+            <div>
+              <label>Дата</label>
+              <input id="dateInput" type="date" required>
+            </div>
+            <div>
+              <label>Час</label>
+              <input id="timeInput" type="time">
+            </div>
+          </div>
+
+          <label class="toggle-row">
+            Надсилати нагадування
+            <input id="isActiveInput" type="checkbox" checked>
+          </label>
+
+          <div class="buttons-row">
+            <button type="button" id="cancelCreateBtn" class="secondary big">Скасувати</button>
+            <button type="submit" class="primary big">Зберегти</button>
+          </div>
+
+        </form>
+      </section>
+
+    </main>
+  </div>
+</div>
+<script src="script.js"></script>
+<div id="passwordModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Зміна паролю</h2>
+
+    <label>Поточний пароль</label>
+    <input type="password" id="currentPassword">
+
+    <label>Новий пароль</label>
+    <input type="password" id="newPassword">
+
+    <label>Повторіть новий пароль</label>
+    <input type="password" id="confirmPassword">
+
+    <div class="modal-actions">
+      <button id="savePasswordBtn" class="btn-blue">Зберегти</button>
+      <button id="closePasswordModal" class="btn-red">Скасувати</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
