@@ -474,3 +474,37 @@ function showScreen(screenId) {
 
   document.getElementById(screenId).classList.remove("hidden");
 }
+
+const changePasswordBtn = document.getElementById("changePasswordBtn");
+const passwordModal = document.getElementById("passwordModal");
+const closePasswordModal = document.getElementById("closePasswordModal");
+const savePasswordBtn = document.getElementById("savePasswordBtn");
+
+if (changePasswordBtn) {
+  changePasswordBtn.addEventListener("click", () => {
+    passwordModal.classList.remove("hidden");
+  });
+}
+
+closePasswordModal.addEventListener("click", () => {
+  passwordModal.classList.add("hidden");
+});
+
+savePasswordBtn.addEventListener("click", () => {
+  const oldPass = oldPassword.value;
+  const newPass = newPassword.value;
+  const repeatPass = repeatPassword.value;
+
+  if (!oldPass || !newPass || !repeatPass) {
+    alert("Заповніть усі поля");
+    return;
+  }
+
+  if (newPass !== repeatPass) {
+    alert("Паролі не співпадають");
+    return;
+  }
+
+  alert("Пароль змінено ✅");
+  passwordModal.classList.add("hidden");
+});

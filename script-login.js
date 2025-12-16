@@ -1,74 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =====================
-     ДОПОМІЖНІ ФУНКЦІЇ
-  ===================== */
-  function getUsers() {
-    return JSON.parse(localStorage.getItem("users")) || [];
-  }
+  // ---------- LOGIN ----------
+  const loginForm = document.getElementById("loginForm");
 
-  function saveUsers(users) {
-    localStorage.setItem("users", JSON.stringify(users));
-  }
-
-  function openModal(id) {
-    document.getElementById(id).style.display = "flex";
-  }
-
-  function closeModal(id) {
-    document.getElementById(id).style.display = "none";
-  }
-
-  /* =====================
-     МОДАЛКИ
-  ===================== */
-  document.getElementById("openRegister").addEventListener("click", e => {
-    e.preventDefault();
-    openModal("registerModal");
-  });
-
-  document.getElementById("openForgot").addEventListener("click", e => {
-    e.preventDefault();
-    openModal("forgotModal");
-  });
-
-  document.querySelectorAll(".close").forEach(btn => {
-    btn.addEventListener("click", () => {
-      closeModal(btn.dataset.close);
-    });
-  });
-
-  window.addEventListener("click", e => {
-    if (e.target.classList.contains("modal")) {
-      e.target.style.display = "none";
-    }
-  });
-
-  /* =====================
-     ЛОГІН
-  ===================== */
-  document.getElementById("loginForm").addEventListener("submit", e => {
+  loginForm.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const emailValue = document.getElementById("email").value.trim();
+    const passwordValue = document.getElementById("password").value.trim();
 
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (!user) {
-      alert("Невірний email або пароль");
+    if (!emailValue || !passwordValue) {
+      alert("Введіть email і пароль");
       return;
     }
 
-    localStorage.setItem("sm_user", JSON.stringify(user));
+    const res = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: emailValue,
+        password: passwordValue
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Помилка входу");
+      return;
+    }
+
+    localStorage.setItem("sm_user", JSON.stringify(data));
     window.location.href = "index.html";
   });
 
-  /* =====================
-     РЕЄСТРАЦІЯ
-  ===================== */
-  document.getElementById("registerBtn").addEventListener("click", () => {
+
+  // ---------- REGISTER ----------
+  document.getElementById("registerBtn").addEventListener("click", async () => {
     const name = document.getElementById("regName").value.trim();
     const email = document.getElementById("regEmail").value.trim();
     const password = document.getElementById("regPassword").value.trim();
@@ -78,17 +46,51 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const users = getUsers();
-    if (users.some(u => u.email === email)) {
-      alert("Користувач з таким email вже існує");
+    const res = await fetch("http://localhost:5000/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Помилка реєстрації");
       return;
     }
 
-    users.push({ name, email, password });
-    saveUsers(users);
-
-    alert("Акаунт створено! Тепер увійдіть");
+    alert("Акаунт створено");
     closeModal("registerModal");
   });
+
+
+  // ---------- MODALS ----------
+  function openModal(id) {
+    document.getElementById(id).style.display = "flex";
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  document.getElementById("openRegister").onclick = e => {
+    e.preventDefault();
+    openModal("registerModal");
+  };
+
+  document.getElementById("openForgot").onclick = e => {
+    e.preventDefault();
+    openModal("forgotModal");
+  };
+
+  document.querySelectorAll(".close").forEach(btn => {
+    btn.onclick = () => closeModal(btn.dataset.close);
+  });
+
+  window.onclick = e => {
+    if (e.target.classList.contains("modal")) {
+      e.target.style.display = "none";
+    }
+  };
 
 });

@@ -204,18 +204,23 @@
     </div>
   </div>
 <!-- Особиста інформація -->
-  <div class="card">
-    <h3>Особиста інформація</h3>
- <label>Імʼя</label>
-    <input id="profileName" type="text">
-<label>Email</label>
-    <input id="profileEmail" type="email">
-<button id="saveProfileBtn" class="primary">Зберегти зміни</button>
+<div class="card profile-form">
+  <h3>Особиста інформація</h3>
+
+  <label>Імʼя</label>
+  <input id="profileName" type="text">
+
+  <label>Email</label>
+  <input id="profileEmail" type="email">
+
+  <button id="saveProfileBtn" class="primary">Зберегти зміни</button>
   </div>
  <!-- Безпека -->
   <div class="card">
     <h3>Безпека</h3>
-    <button class="secondary">Змінити пароль</button>
+    <button id="changePasswordBtn" class="secondary">
+  Змінити пароль
+</button>
   </div>
 
   <!-- Небезпечна зона -->
@@ -268,7 +273,26 @@
     </main>
   </div>
 </div>
-
 <script src="script.js"></script>
+<div id="passwordModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Зміна паролю</h2>
+
+    <label>Поточний пароль</label>
+    <input type="password" id="currentPassword">
+
+    <label>Новий пароль</label>
+    <input type="password" id="newPassword">
+
+    <label>Повторіть новий пароль</label>
+    <input type="password" id="confirmPassword">
+
+    <div class="modal-actions">
+      <button id="savePasswordBtn" class="btn-blue">Зберегти</button>
+      <button id="closePasswordModal" class="btn-red">Скасувати</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

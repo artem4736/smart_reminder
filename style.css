@@ -355,7 +355,14 @@ body[data-theme="dark"] select {
 body[data-theme="dark"] .reminder-card,
 body[data-theme="dark"] .create-card,
 body[data-theme="dark"] .profile-card,
-body[data-theme="dark"] .settings-card {
+body[data-theme="dark"] .settings-card,
+body[data-theme="dark"] .card {
+  background: #1a1d22;
+  border: 1px solid #2a2f38;
+  color: #e5e7eb;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
   background: #1a1d22;
   border: 1px solid #2a2f38;
   color: #e5e7eb;
@@ -467,4 +474,23 @@ body[data-theme="light"] .avatar {
   background: #fff5f5;
 }
 
-`
+`/* ===== PROFILE FORM FIX ===== */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-form label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.profile-form input {
+  width: 100%;
+}
+
+.profile-form button {
+  margin-top: 12px;
+  align-self: flex-start; /* або stretch */
+}
