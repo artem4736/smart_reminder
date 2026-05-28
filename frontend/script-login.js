@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ---------- REGISTER ----------
- document.getElementById("registerBtn").addEventListener("click", () => {
+document.getElementById("registerBtn").addEventListener("click", () => {
 
   const name = document.getElementById("regName").value.trim();
   const email = document.getElementById("regEmail").value.trim();
