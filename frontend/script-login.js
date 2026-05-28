@@ -78,17 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const savedUser = JSON.parse(localStorage.getItem("sm_user"));
 
-    if (!savedUser) {
-      alert("Користувача не знайдено");
-      return;
-    }
+    
 
-    if (savedUser.email === email && savedUser.password === password) {
+   
       alert("Успішний вхід");
       window.location.href = "index.html";
-    } else {
-      alert("Невірний email або пароль");
-    }
+   
   });
 
 });
