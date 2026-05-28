@@ -29,7 +29,27 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Невірний email або пароль");
   }
 });
+document.getElementById("registerBtn").addEventListener("click", () => {
 
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+
+  if (!name || !email || !password) {
+    alert("Заповніть усі поля");
+    return;
+  }
+
+  const user = {
+    name,
+    email,
+    password
+  };
+
+  localStorage.setItem("sm_user", JSON.stringify(user));
+
+  alert("Акаунт створено");
+});
   // ---------- MODALS ----------
   function openModal(id) {
     document.getElementById(id).style.display = "flex";
