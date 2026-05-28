@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---------- REGISTER ----------
  document.getElementById("registerBtn").addEventListener("click", () => {
+
   const name = document.getElementById("regName").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value.trim();
@@ -51,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.setItem("sm_user", JSON.stringify(user));
 
   alert("Акаунт створено");
-  closeModal("registerModal");
 });
 
   // ---------- MODALS ----------
