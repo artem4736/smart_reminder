@@ -1,38 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ---------- LOGIN ----------
-  const loginForm = document.getElementById("loginForm");
+ loginForm.addEventListener("submit", e => {
+  e.preventDefault();
 
-  loginForm.addEventListener("submit", async e => {
-    e.preventDefault();
+  const emailValue = document.getElementById("email").value.trim();
+  const passwordValue = document.getElementById("password").value.trim();
 
-    const emailValue = document.getElementById("email").value.trim();
-    const passwordValue = document.getElementById("password").value.trim();
+  if (!emailValue || !passwordValue) {
+    alert("Введіть email і пароль");
+    return;
+  }
 
-    if (!emailValue || !passwordValue) {
-      alert("Введіть email і пароль");
-      return;
-    }
+  const savedUser = JSON.parse(localStorage.getItem("sm_user"));
 
-    const res = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: emailValue,
-        password: passwordValue
-      })
-    });
+  if (!savedUser) {
+    alert("Користувача не знайдено");
+    return;
+  }
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.error || "Помилка входу");
-      return;
-    }
-
-    localStorage.setItem("sm_user", JSON.stringify(data));
+  if (
+    savedUser.email === emailValue &&
+    savedUser.password === passwordValue
+  ) {
+    alert("Успішний вхід");
     window.location.href = "index.html";
-  });
+  } else {
+    alert("Невірний email або пароль");
+  }
+});
 
 
   // ---------- REGISTER ----------
