@@ -32,33 +32,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ---------- REGISTER ----------
-  document.getElementById("registerBtn").addEventListener("click", async () => {
-    const name = document.getElementById("regName").value.trim();
-    const email = document.getElementById("regEmail").value.trim();
-    const password = document.getElementById("regPassword").value.trim();
+ document.getElementById("registerBtn").addEventListener("click", () => {
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
 
-    if (!name || !email || !password) {
-      alert("Заповніть усі поля");
-      return;
-    }
+  if (!name || !email || !password) {
+    alert("Заповніть усі поля");
+    return;
+  }
 
-    const res = await fetch("http://localhost:5000/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
+  const user = {
+    name,
+    email,
+    password
+  };
 
-    const data = await res.json();
+  localStorage.setItem("sm_user", JSON.stringify(user));
 
-    if (!res.ok) {
-      alert(data.error || "Помилка реєстрації");
-      return;
-    }
-
-    alert("Акаунт створено");
-    closeModal("registerModal");
-  });
-
+  alert("Акаунт створено");
+  closeModal("registerModal");
+});
 
   // ---------- MODALS ----------
   function openModal(id) {
