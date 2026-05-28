@@ -71,19 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
 
   loginForm.addEventListener("submit", e => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    const savedUser = JSON.parse(localStorage.getItem("sm_user"));
-
-    
-
-   
-      alert("Успішний вхід");
-      window.location.href = "index.html";
-   
-  });
+  window.location.href = "index.html";
+});
 
 });
